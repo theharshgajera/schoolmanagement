@@ -20,3 +20,5 @@ sqlparse
 urllib3
 webencodings
 openpyxl
+whitenoise
+gunicorn
