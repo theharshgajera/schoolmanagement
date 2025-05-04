@@ -19,4 +19,4 @@ six
 sqlparse
 urllib3
 webencodings
-opnepyxl
+openpyxl
