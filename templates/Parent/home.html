@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Welcome {{ request.user.first_name }}!</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active">Parent Dashboard</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% include 'includes/messages.html' %}
+    <div class="row">
+        <div class="col-xl-6 col-sm-6 col-12 d-flex">
+            <div class="card bg-one w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>{{ attendance_count }}</h3>
+                            <h6>Attendance Records</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 col-sm-6 col-12 d-flex">
+            <div class="card bg-two w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-poll-h"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>{{ results_count }}</h3>
+                            <h6>Result Records</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Student Details</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ student.admin.first_name }}</p>
+                    <p><strong>Enrollment No:</strong> {{ student.enrollment_no }}</p>
+                    <p><strong>Course:</strong> {{ student.course_id.name }}</p>
+                    <p><strong>Session:</strong> {{ student.session_year_id.session_start }} - {{ student.session_year_id.session_end }}</p>
+                    <p><strong>Semester:</strong> {{ student.get_semester_display }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

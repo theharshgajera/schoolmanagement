@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Welcome {{user.last_name}}!</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Student Dashboard</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-nine w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>04/06</h3>
+                            <h6>All Courses</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-six w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>40/60</h3>
+                            <h6>All Projects</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-ten w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>30/50</h3>
+                            <h6>Test Attended</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-eleven w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>15/20</h3>
+                            <h6>Test Passed</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-five w-100">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-sticky-note"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>{{ notes_count }}</h3>
+                            <h6><a href="{% url 'student_notes' %}" style="color: white;">My Notes</a></h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header">
+                    <h5 class="card-title">Star Students</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th class="text-center">Marks</th>
+                                    <th class="text-center">Percentage</th>
+                                    <th class="text-right">Year</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-nowrap">
+                                        <div>PRE2209</div>
+                                    </td>
+                                    <td class="text-nowrap">John Smith</td>
+                                    <td class="text-center">1185</td>
+                                    <td class="text-center">98%</td>
+                                    <td class="text-right">
+                                        <div>2019</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-nowrap">
+                                        <div>PRE1245</div>
+                                    </td>
+                                    <td class="text-nowrap">Jolie Hoskins</td>
+                                    <td class="text-center">1195</td>
+                                    <td class="text-center">99.5%</td>
+                                    <td class="text-right">
+                                        <div>2018</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-nowrap">
+                                        <div>PRE1625</div>
+                                    </td>
+                                    <td class="text-nowrap">Pennington Joy</td>
+                                    <td class="text-center">1196</td>
+                                    <td class="text-center">99.6%</td>
+                                    <td class="text-right">
+                                        <div>2017</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-nowrap">
+                                        <div>PRE2516</div>
+                                    </td>
+                                    <td class="text-nowrap">Millie Marsden</td>
+                                    <td class="text-center">1187</td>
+                                    <td class="text-center">98.2%</td>
+                                    <td class="text-right">
+                                        <div>2016</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-nowrap">
+                                        <div>PRE2209</div>
+                                    </td>
+                                    <td class="text-nowrap">John Smith</td>
+                                    <td class="text-center">1185</td>
+                                    <td class="text-center">98%</td>
+                                    <td class="text-right">
+                                        <div>2015</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

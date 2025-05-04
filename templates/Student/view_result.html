@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">View Result</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'student_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Result</li>
+                </ul>
+            </div>
+            <div class="col-auto">
+                <a href="?download=pdf" class="btn btn-primary">Download PDF</a>
+            </div>
+        </div>
+    </div>
+    {% include 'includes/messages.html' %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="table_id" class="table table-hover table-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Assignment</th>
+                                    <th>Exam</th>
+                                    <th>IA1</th>
+                                    <th>IA2</th>
+                                    <th>Attendance</th>
+                                    <th>Mid Sem</th>
+                                    <th>End Sem</th>
+                                    <th>Total</th>
+                                    <th>CGPA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in results %}
+                                <tr>
+                                    <td>{{ i.subject_id.name }}</td>
+                                    <td>{{ i.assignment_mark|default_if_none:'-' }}</td>
+                                    <td>{{ i.exam_mark|default_if_none:'-' }}</td>
+                                    <td>{{ i.ia1_mark|default_if_none:'-' }}</td>
+                                    <td>{{ i.ia2_mark|default_if_none:'-' }}</td>
+                                    <td>{{ i.attendance_mark|default_if_none:'-' }}</td>
+                                    <td>{{ i.midsem_mark|default_if_none:'-' }}</td>
+                                    <td>{{ i.end_sem_mark|default_if_none:'-' }}</td>
+                                    <td>{{ i.total_mark|default_if_none:'-' }}</td>
+                                    <td>{{ i.calculate_cgpa|default_if_none:'-' }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load custome_filter %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Add Result</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'staff_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Add Result</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% include 'includes/messages.html' %}
+    {% if success_message %}
+    <div class="alert alert-success">
+        {{ success_message }}
+    </div>
+    {% endif %}
+    {% if action is None %}
+    <form method="post" action="?action=get_student" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Add Result</span></h5>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Subject</label>
+                                    <select class="form-control" name="subject_id">
+                                        <option value="">Select Subject</option>
+                                        {% for i in subjects %}
+                                        <option value="{{ i.id }}">{{ i.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Session Year</label>
+                                    <select class="form-control" name="session_year_id">
+                                        <option value="">Select Session Year</option>
+                                        {% for i in session_year %}
+                                        <option value="{{ i.id }}">{{ i.session_start }} TO {{ i.session_end }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Fetch Students</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% else %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="form-title"><span>Add Result for {{ get_subject.name }} - {{ get_session.session_start }} to {{ get_session.session_end }}</span></h5>
+                    {% if students %}
+                    <form method="post" action="" id="resultForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="subject_id" value="{{ get_subject.id }}">
+                        <input type="hidden" name="session_year_id" value="{{ get_session.id }}">
+                        <input type="hidden" name="save_all" value="1">
+                        <div class="mb-3">
+                            <a href="{% url 'staff_download_result_template' %}?subject_id={{ get_subject.id }}&session_year_id={{ get_session.id }}" class="btn btn-info">Download Template</a>
+                            <input type="file" name="excel_file" accept=".xlsx, .xls" class="form-control d-inline-block w-auto ml-2" style="display: inline-block;" onchange="this.form.submit()">
+                            <a href="?download=excel&subject_id={{ get_subject.id }}&session_year_id={{ get_session.id }}" class="btn btn-success ml-2">Download Excel</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name (ID)</th>
+                                        <th>Assignment</th>
+                                        <th>Exam</th>
+                                        <th>IA1</th>
+                                        <th>IA2</th>
+                                        <th>Attendance</th>
+                                        <th>Mid Sem</th>
+                                        <th>End Sem</th>
+                                        <th>Total</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in students %}
+                                    {% with result=results|filter_student:student.id %}
+                                    <tr class="student-row" data-student-id="{{ student.id }}">
+                                        <td>{{ student.admin.first_name }} {{ student.admin.last_name }} ({{ student.id }})</td>
+                                        <td>
+                                            <input type="number" class="form-control mark-input" name="assignment_mark_{{ student.id }}" value="{{ result.assignment_mark|default_if_none:'' }}" step="1" min="0" required>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control mark-input" name="exam_mark_{{ student.id }}" value="{{ result.exam_mark|default_if_none:'' }}" step="1" min="0" required>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control mark-input" name="ia1_mark_{{ student.id }}" value="{{ result.ia1_mark|default_if_none:'' }}" step="0.1" min="0" required>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control mark-input" name="ia2_mark_{{ student.id }}" value="{{ result.ia2_mark|default_if_none:'' }}" step="0.1" min="0" required>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control mark-input" name="attendance_mark_{{ student.id }}" value="{{ result.attendance_mark|default_if_none:'' }}" step="0.1" min="0" required>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control mark-input" name="midsem_mark_{{ student.id }}" value="{{ result.midsem_mark|default_if_none:'' }}" step="0.1" min="0" required>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control mark-input" name="end_sem_mark_{{ student.id }}" value="{{ result.end_sem_mark|default_if_none:'' }}" step="0.1" min="0" required>
+                                        </td>
+                                        <td class="total-mark">
+                                            {{ result.total_mark|default_if_none:'-' }}
+                                        </td>
+                                        <td>
+                                            <span class="tick-mark" style="color: green; font-size: 1.5em; display: none;">✔</span>
+                                        </td>
+                                    </tr>
+                                    {% endwith %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-12 mt-4 text-right">
+                            <button type="submit" class="btn btn-success" id="saveAllBtn" disabled>Save All</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.student-row');
+            const saveAllBtn = document.getElementById('saveAllBtn');
+
+            function checkRowCompletion(row) {
+                const inputs = row.querySelectorAll('.mark-input');
+                const tickMark = row.querySelector('.tick-mark');
+                let allFilled = true;
+
+                inputs.forEach(input => {
+                    if (!input.value || input.value.trim() === '' || parseFloat(input.value) < 0) {
+                        allFilled = false;
+                    }
+                });
+
+                if (allFilled) {
+                    tickMark.style.display = 'inline';
+                    // Calculate total dynamically for display (not saved yet)
+                    let total = 0;
+                    inputs.forEach(input => {
+                        if (input.name.includes('ia1_mark') || 
+                            input.name.includes('ia2_mark') || 
+                            input.name.includes('attendance_mark') || 
+                            input.name.includes('midsem_mark') || 
+                            input.name.includes('end_sem_mark')) {
+                            total += parseFloat(input.value) || 0;
+                        }
+                    });
+                    row.querySelector('.total-mark').textContent = total.toFixed(1);
+                } else {
+                    tickMark.style.display = 'none';
+                    row.querySelector('.total-mark').textContent = '-';
+                }
+
+                return allFilled;
+            }
+
+            function checkAllRows() {
+                let allRowsFilled = true;
+                rows.forEach(row => {
+                    if (!checkRowCompletion(row)) {
+                        allRowsFilled = false;
+                    }
+                });
+                saveAllBtn.disabled = !allRowsFilled;
+            }
+
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('.mark-input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => {
+                        checkAllRows();
+                    });
+                });
+            });
+
+            // Initial check on page load
+            checkAllRows();
+        });
+    </script>
+    {% endif %}
+</div>
+{% endblock %}

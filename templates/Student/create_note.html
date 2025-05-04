@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Create New Note</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'student_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'student_notes' %}">Notes</a></li>
+                    <li class="breadcrumb-item active">Create Note</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" name="title" id="title" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea name="content" id="content" class="form-control" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="file">Attach File (Optional)</label>
+                    <input type="file" name="file" id="file" class="form-control-file">
+                </div>
+                <button type="submit" class="btn btn-primary">Save Note</button>
+                <a href="{% url 'student_notes' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

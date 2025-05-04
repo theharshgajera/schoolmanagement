@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">View Attendance</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'student_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">View Attendance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% include 'includes/messages.html' %}
+    {% if action is None %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-body">
+                <form action="?action=show_attendance" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="form-title"><span>View Attendance</span></h5>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label for="subject_id">Subject</label>
+                                <select class="form-control" id="subject_id" name="subject_id" required>
+                                    <option value="">Select Subject</option>
+                                    {% for i in subjects %}
+                                    <option value="{{ i.id }}">{{ i.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label for="session_year_id">Session Year</label>
+                                <select class="form-control" id="session_year_id" name="session_year_id" required>
+                                    <option value="">Select Session Year</option>
+                                    {% for i in session_year %}
+                                    <option value="{{ i.id }}">{{ i.session_start }} To {{ i.session_end }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary">Show Attendance</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% elif action == 'show_attendance' and attendance_report %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-body">
+                <h5 class="form-title"><span>Attendance for {{ get_subject.name }} ({{ get_session_year.session_start }} To {{ get_session_year.session_end }})</span></h5>
+                <div class="table-responsive">
+                    <a href="?download=excel&subject_id={{ get_subject.id }}&session_year_id={{ get_session_year.id }}" class="btn btn-success mb-3">Download Excel</a>
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in attendance_report %}
+                            <tr>
+                                <td>{{ report.attendance_id.attendance_data }}</td>
+                                <td>
+                                    {% if report.status == 1 %}
+                                        <span class="badge bg-success">Present</span>
+                                    {% elif report.status == 0 %}
+                                        <span class="badge bg-danger">Absent</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">N/A</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if not attendance_report %}
+                <p class="text-warning">No attendance records found for this subject and session year.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

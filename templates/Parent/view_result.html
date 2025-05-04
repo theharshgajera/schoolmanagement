@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">View Result</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'parent_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">View Result</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% include 'includes/messages.html' %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Assignment</th>
+                                    <th>Exam</th>
+                                    <th>IA1</th>
+                                    <th>IA2</th>
+                                    <th>Attendance</th>
+                                    <th>Mid Sem</th>
+                                    <th>End Sem</th>
+                                    <th>Total Marks</th>
+                                    <th>CGPA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in results %}
+                                <tr>
+                                    <td>{{ result.subject_id.name }}</td>
+                                    <td>{{ result.assignment_mark|default:"-" }}</td>
+                                    <td>{{ result.exam_mark|default:"-" }}</td>
+                                    <td>{{ result.ia1_mark|default:"-" }}</td>
+                                    <td>{{ result.ia2_mark|default:"-" }}</td>
+                                    <td>{{ result.attendance_mark|default:"-" }}</td>
+                                    <td>{{ result.midsem_mark|default:"-" }}</td>
+                                    <td>{{ result.end_sem_mark|default:"-" }}</td>
+                                    <td>{{ result.total_mark|default:"-" }}</td>
+                                    <td>{{ result.calculate_cgpa|default:"-" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="10">No Results Available</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if results %}
+                    <div class="mt-3">
+                        <a href="{% url 'parent_view_result' %}?download=pdf" class="btn btn-success">Download as PDF</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
