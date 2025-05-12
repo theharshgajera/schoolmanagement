@@ -45,7 +45,7 @@
                                     <td>{{i.admin.email}}</td>
                                     <td class="text-right">
                                         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sendnotification-{{forloop.counter}}">
-                                            Send Staff Notification
+                                            Send Notification
                                         </button>
                                     </td>
                                 </tr>
@@ -53,6 +53,37 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Send All Staff Notification Button -->
+    <div class="text-center mt-3 mb-4">
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#sendAllNotification">
+            Send Notification to All Staff
+        </button>
+    </div>
+
+    <!-- Send All Staff Notification Modal -->
+    <div class="modal fade" id="sendAllNotification" tabindex="-1" role="dialog" aria-labelledby="sendAllNotificationTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sendAllNotificationTitle">Send Notification to All Staff</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'save_staff_notification' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="staff_id" value="all">
+                        <div class="form-group">
+                            <textarea name="message" class="form-control" placeholder="Write your message here" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send to All Staff</button>
+                    </form>
                 </div>
             </div>
         </div>

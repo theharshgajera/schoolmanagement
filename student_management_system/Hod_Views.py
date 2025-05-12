@@ -584,15 +584,29 @@ def STAFF_SEND_NOTIFICATION(request):
 @login_required(login_url='/')
 def SAVE_STAFF_NOTIFICATION(request):
     if request.method == "POST":
-        staff_id = request.POST.get('staff_id')
         message = request.POST.get('message')
-        staff = Staff.objects.get(admin=staff_id)
-        notification = Staff_Notification(
-            staff_id=staff,
-            message=message,
-        )
-        notification.save()
-        messages.success(request, 'Notification Successfully Sent')
+        staff_id = request.POST.get('staff_id')
+        
+        if staff_id == 'all':
+            # Send notification to all staff members
+            staff_members = Staff.objects.all()
+            for staff in staff_members:
+                notification = Staff_Notification(
+                    staff_id=staff,
+                    message=message,
+                )
+                notification.save()
+            messages.success(request, 'Notification Successfully Sent to All Staff')
+        else:
+            # Send notification to specific staff member
+            staff = Staff.objects.get(admin=staff_id)
+            notification = Staff_Notification(
+                staff_id=staff,
+                message=message,
+            )
+            notification.save()
+            messages.success(request, 'Notification Successfully Sent')
+            
         return redirect('staff_send_notification')
 
 @login_required(login_url='/')
@@ -752,13 +766,27 @@ def SAVE_STUDENT_NOTIFICATION(request):
     if request.method == "POST":
         message = request.POST.get('message')
         student_id = request.POST.get('student_id')
-        student = Student.objects.get(admin=student_id)
-        stud_notification = Student_Notification(
-            student_id=student,
-            message=message,
-        )
-        stud_notification.save()
-        messages.success(request, 'Student Notification Successfully Sent')
+        
+        if student_id == 'all':
+            # Send notification to all students
+            students = Student.objects.all()
+            for student in students:
+                notification = Student_Notification(
+                    student_id=student,
+                    message=message,
+                )
+                notification.save()
+            messages.success(request, 'Notification Successfully Sent to All Students')
+        else:
+            # Send notification to specific student
+            student = Student.objects.get(admin=student_id)
+            notification = Student_Notification(
+                student_id=student,
+                message=message,
+            )
+            notification.save()
+            messages.success(request, 'Notification Successfully Sent')
+            
         return redirect('student_send_notification')
 
 @login_required(login_url='/')
