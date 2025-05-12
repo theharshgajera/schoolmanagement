@@ -95,6 +95,12 @@
                 <li class="">
                     <a href="{% url 'staff_add_result' %}"><i class="fas fa-poll-h"></i> <span>Add Result</span></a>
                 </li>
+                <li class="submenu">
+                    <a href="#"><i class="fas fa-book"></i> <span>Study Materials</span> <span class="menu-arrow"></span></a>
+                    <ul>
+                        <li><a href="{% url 'staff_study_materials' %}">Manage Materials</a></li>
+                    </ul>
+                </li>
                 <li class="">
                     <a href="{% url 'staff_apply_leave' %}"><i class="fas fa-envelope-open"></i> <span>Apply For Leave</span></a>
                 </li>
@@ -121,6 +127,12 @@
                 </li>
                 <li class="">
                     <a href="{% url 'view_result' %}"><i class="fa fa-poll" aria-hidden="true"></i><span>View Result</span></a>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fas fa-book"></i> <span>Study Materials</span> <span class="menu-arrow"></span></a>
+                    <ul>
+                        <li><a href="{% url 'student_view_materials' %}">View Materials</a></li>
+                    </ul>
                 </li>
                 <li class="">
                     <a href="{% url 'student_leave' %}"><i class="fa fa-pray" aria-hidden="true"></i><span>Apply For Leave</span></a>

@@ -85,6 +85,11 @@ urlpatterns = [
     path('Staff/Notes/Edit/<int:note_id>', Staff_Views.STAFF_EDIT_NOTE, name='staff_edit_note'),
     path('Staff/Notes/Delete/<int:note_id>', Staff_Views.STAFF_DELETE_NOTE, name='staff_delete_note'),
 
+    # Staff Study Materials URLs
+    path('staff/study-materials/', Staff_Views.STAFF_STUDY_MATERIALS, name='staff_study_materials'),
+    path('staff/add-material/', Staff_Views.STAFF_ADD_MATERIAL, name='staff_add_material'),
+    path('staff/delete-material/<int:material_id>/', Staff_Views.STAFF_DELETE_MATERIAL, name='staff_delete_material'),
+
     # Student URLs
     path('Student/Home', Student_Views.Home, name='student_home'),
     path('Student/Notifications', Student_Views.STUDENT_NOTIFICATION, name='student_notification'),
@@ -99,6 +104,9 @@ urlpatterns = [
     path('Student/Notes/Create', Student_Views.STUDENT_CREATE_NOTE, name='student_create_note'),
     path('Student/Notes/Edit/<int:note_id>', Student_Views.STUDENT_EDIT_NOTE, name='student_edit_note'),
     path('Student/Notes/Delete/<int:note_id>', Student_Views.STUDENT_DELETE_NOTE, name='student_delete_note'),
+
+    # Student Study Materials URL
+    path('student/study-materials/', Student_Views.STUDENT_VIEW_MATERIALS, name='student_view_materials'),
 
     # Parent URLs
     path('Parent/Home', parent_views.HOME, name='parent_home'),

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from app.models import Student_Notification, Student, Student_Feedback, Student_leave, Subject, Attendance, Attendance_Report, StudentResult, Session_Year, Note
+from app.models import Student_Notification, Student, Student_Feedback, Student_leave, Subject, Attendance, Attendance_Report, StudentResult, Session_Year, Note, StudyMaterial
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import openpyxl
@@ -280,6 +280,17 @@ def VIEW_RESULT(request):
 
     context = {'results': results}
     return render(request, 'Student/view_result.html', context)
+
+@login_required(login_url='/')
+def STUDENT_VIEW_MATERIALS(request):
+    student = Student.objects.get(admin=request.user)
+    # Get materials for subjects in student's course
+    materials = StudyMaterial.objects.filter(subject__course=student.course_id).order_by('-uploaded_at')
+    
+    context = {
+        'materials': materials,
+    }
+    return render(request, 'Student/view_materials.html', context)
 
 # New views for student notes
 @login_required(login_url='/')

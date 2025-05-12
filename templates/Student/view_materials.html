@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Study Materials</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'student_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Study Materials</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% include 'includes/messages.html' %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0 datatable">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Subject</th>
+                                    <th>Type</th>
+                                    <th>Uploaded By</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for material in materials %}
+                                <tr>
+                                    <td>
+                                        {{ material.title }}
+                                        {% if material.description %}
+                                        <small class="d-block text-muted">{{ material.description|truncatechars:50 }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ material.subject.name }}</td>
+                                    <td>{{ material.get_material_type_display }}</td>
+                                    <td>{{ material.staff.admin.first_name }} {{ material.staff.admin.last_name }}</td>
+                                    <td>{{ material.uploaded_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{{ material.file.url }}" class="btn btn-sm btn-info" target="_blank">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No study materials available for your subjects.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

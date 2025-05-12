@@ -93,6 +93,29 @@ class Subject(models.Model):
     def __str__(self):
         return f"{self.subject_code} - {self.name}" if self.subject_code else self.name
 
+class StudyMaterial(models.Model):
+    MATERIAL_TYPES = (
+        ('syllabus', 'Syllabus'),
+        ('notes', 'Notes'),
+        ('assignment', 'Assignment'),
+        ('other', 'Other'),
+    )
+    
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    file = models.FileField(upload_to='study_materials/')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    material_type = models.CharField(max_length=20, choices=MATERIAL_TYPES, default='notes')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.subject.name}"
+
+    class Meta:
+        ordering = ['-uploaded_at']
+
 class Note(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)

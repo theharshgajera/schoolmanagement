@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from app.models import Course, Session_Year, CustomUser, Student, Staff, Subject, Staff_Notification, Staff_leave, Staff_Feedback, Student_Notification, Student_Feedback, Student_leave, Attendance, Attendance_Report, StudentResult, Note
+from app.models import Course, Session_Year, CustomUser, Student, Staff, Subject, Staff_Notification, Staff_leave, Staff_Feedback, Student_Notification, Student_Feedback, Student_leave, Attendance, Attendance_Report, StudentResult, Note, StudyMaterial
 from django.contrib import messages
 import openpyxl
 
@@ -681,3 +681,71 @@ def STAFF_DELETE_NOTE(request, note_id):
     except Note.DoesNotExist:
         messages.error(request, 'Note not found.')
     return redirect('staff_notes')
+
+# New views for staff study materials
+@login_required(login_url='/')
+def STAFF_STUDY_MATERIALS(request):
+    staff = Staff.objects.get(admin=request.user)
+    subjects = staff.subjects.all()
+    materials = StudyMaterial.objects.filter(staff=staff).order_by('-uploaded_at')
+    
+    context = {
+        'subjects': subjects,
+        'materials': materials,
+    }
+    return render(request, 'Staff/study_materials.html', context)
+
+@login_required(login_url='/')
+def STAFF_ADD_MATERIAL(request):
+    if request.method == "POST":
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        subject_id = request.POST.get('subject_id')
+        material_type = request.POST.get('material_type')
+        material_file = request.FILES.get('material_file')
+        
+        try:
+            subject = Subject.objects.get(id=subject_id)
+            staff = Staff.objects.get(admin=request.user)
+            
+            # Verify staff teaches this subject
+            if subject not in staff.subjects.all():
+                messages.error(request, "You are not authorized to add materials for this subject.")
+                return redirect('staff_study_materials')
+            
+            material = StudyMaterial(
+                title=title,
+                description=description,
+                subject=subject,
+                staff=staff,
+                material_type=material_type,
+                file=material_file
+            )
+            material.save()
+            messages.success(request, "Study material added successfully!")
+            
+        except Subject.DoesNotExist:
+            messages.error(request, "Selected subject does not exist.")
+        except Exception as e:
+            messages.error(request, f"Error adding material: {str(e)}")
+            
+    return redirect('staff_study_materials')
+
+@login_required(login_url='/')
+def STAFF_DELETE_MATERIAL(request, material_id):
+    try:
+        material = StudyMaterial.objects.get(id=material_id)
+        staff = Staff.objects.get(admin=request.user)
+        
+        # Verify ownership
+        if material.staff != staff:
+            messages.error(request, "You are not authorized to delete this material.")
+            return redirect('staff_study_materials')
+            
+        material.delete()
+        messages.success(request, "Study material deleted successfully!")
+        
+    except StudyMaterial.DoesNotExist:
+        messages.error(request, "Material not found.")
+    
+    return redirect('staff_study_materials')
