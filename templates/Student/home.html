@@ -4,171 +4,198 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="page-title">Welcome {{user.last_name}}!</h3>
+                <h3 class="page-title">Welcome {{user.first_name}} {{user.last_name}}!</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
                     <li class="breadcrumb-item active">Student Dashboard</li>
                 </ul>
             </div>
         </div>
     </div>
+
+    <!-- Statistics Cards -->
     <div class="row">
         <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-nine w-100">
+            <div class="card bg-primary w-100">
                 <div class="card-body">
                     <div class="db-widgets d-flex justify-content-between align-items-center">
                         <div class="db-icon">
-                            <i class="fas fa-book-open"></i>
+                            <i class="fas fa-calendar-check text-white"></i>
                         </div>
-                        <div class="db-info">
-                            <h3>04/06</h3>
-                            <h6>All Courses</h6>
+                        <div class="db-info text-white">
+                            <h3>{{ attendance_percent }}%</h3>
+                            <h6>Attendance</h6>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-six w-100">
+            <div class="card bg-warning w-100">
                 <div class="card-body">
                     <div class="db-widgets d-flex justify-content-between align-items-center">
                         <div class="db-icon">
-                            <i class="fas fa-file-alt"></i>
+                            <i class="fas fa-book text-white"></i>
                         </div>
-                        <div class="db-info">
-                            <h3>40/60</h3>
-                            <h6>All Projects</h6>
+                        <div class="db-info text-white">
+                            <h3>{{ materials_count }}</h3>
+                            <h6>Study Materials</h6>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-ten w-100">
+            <div class="card bg-success w-100">
                 <div class="card-body">
                     <div class="db-widgets d-flex justify-content-between align-items-center">
                         <div class="db-icon">
-                            <i class="fas fa-clipboard-list"></i>
+                            <i class="fas fa-bell text-white"></i>
                         </div>
-                        <div class="db-info">
-                            <h3>30/50</h3>
-                            <h6>Test Attended</h6>
+                        <div class="db-info text-white">
+                            <h3>{{ notification_count }}</h3>
+                            <h6>New Notifications</h6>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-eleven w-100">
+            <div class="card bg-info w-100">
                 <div class="card-body">
                     <div class="db-widgets d-flex justify-content-between align-items-center">
                         <div class="db-icon">
-                            <i class="fas fa-clipboard-check"></i>
+                            <i class="fas fa-sticky-note text-white"></i>
                         </div>
-                        <div class="db-info">
-                            <h3>15/20</h3>
-                            <h6>Test Passed</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-five w-100">
-                <div class="card-body">
-                    <div class="db-widgets d-flex justify-content-between align-items-center">
-                        <div class="db-icon">
-                            <i class="fas fa-sticky-note"></i>
-                        </div>
-                        <div class="db-info">
+                        <div class="db-info text-white">
                             <h3>{{ notes_count }}</h3>
-                            <h6><a href="{% url 'student_notes' %}" style="color: white;">My Notes</a></h6>
+                            <h6>Personal Notes</h6>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Charts Row -->
     <div class="row">
+        <!-- Subject Performance Chart -->
         <div class="col-md-6 d-flex">
             <div class="card flex-fill">
                 <div class="card-header">
-                    <h5 class="card-title">Star Students</h5>
+                    <h5 class="card-title">Subject Performance</h5>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-center">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th class="text-center">Marks</th>
-                                    <th class="text-center">Percentage</th>
-                                    <th class="text-right">Year</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE2209</div>
-                                    </td>
-                                    <td class="text-nowrap">John Smith</td>
-                                    <td class="text-center">1185</td>
-                                    <td class="text-center">98%</td>
-                                    <td class="text-right">
-                                        <div>2019</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE1245</div>
-                                    </td>
-                                    <td class="text-nowrap">Jolie Hoskins</td>
-                                    <td class="text-center">1195</td>
-                                    <td class="text-center">99.5%</td>
-                                    <td class="text-right">
-                                        <div>2018</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE1625</div>
-                                    </td>
-                                    <td class="text-nowrap">Pennington Joy</td>
-                                    <td class="text-center">1196</td>
-                                    <td class="text-center">99.6%</td>
-                                    <td class="text-right">
-                                        <div>2017</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE2516</div>
-                                    </td>
-                                    <td class="text-nowrap">Millie Marsden</td>
-                                    <td class="text-center">1187</td>
-                                    <td class="text-center">98.2%</td>
-                                    <td class="text-right">
-                                        <div>2016</div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-nowrap">
-                                        <div>PRE2209</div>
-                                    </td>
-                                    <td class="text-nowrap">John Smith</td>
-                                    <td class="text-center">1185</td>
-                                    <td class="text-center">98%</td>
-                                    <td class="text-right">
-                                        <div>2015</div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <canvas id="subjectPerformanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leave Applications Chart -->
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header">
+                    <h5 class="card-title">Leave Applications Status</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="leaveStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Info Row -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Student Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Course</label>
+                                <p class="form-control-static">{{ student.course_id.name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Semester</label>
+                                <p class="form-control-static">{{ student.get_semester_display }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Enrollment Number</label>
+                                <p class="form-control-static">{{ student.enrollment_no }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block custom_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Subject Performance Chart
+    var subjectCtx = document.getElementById('subjectPerformanceChart').getContext('2d');
+    new Chart(subjectCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for mark in subject_marks %}'{{ mark.subject }}',{% endfor %}],
+            datasets: [{
+                label: 'Total Marks',
+                data: [{% for mark in subject_marks %}{{ mark.total_mark }},{% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Leave Status Chart
+    var leaveCtx = document.getElementById('leaveStatusChart').getContext('2d');
+    new Chart(leaveCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Approved', 'Rejected'],
+            datasets: [{
+                data: [{{ leave_pending }}, {{ leave_approved }}, {{ leave_rejected }}],
+                backgroundColor: [
+                    'rgba(255, 206, 86, 0.5)',
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(255, 99, 132, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

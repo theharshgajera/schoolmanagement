@@ -12,16 +12,55 @@ import io
 
 @login_required(login_url='/')
 def Home(request):
-    mark = None
-    stud_result = StudentResult.objects.filter(student_id__admin=request.user.id)
-    for i in stud_result:
-        assignment_mark = i.assignment_mark or 0
-        exam_mark = i.exam_mark or 0
-        mark = assignment_mark + exam_mark
+    student = Student.objects.get(admin=request.user)
+    
+    # Get all results for the student
+    results = StudentResult.objects.filter(student_id=student)
+    
+    # Calculate attendance percentage
+    attendance_reports = Attendance_Report.objects.filter(student_id=student)
+    total_attendance = attendance_reports.count()
+    present_attendance = attendance_reports.filter(status=1).count()
+    attendance_percent = (present_attendance / total_attendance * 100) if total_attendance > 0 else 0
+    
+    # Get subject-wise marks
+    subject_marks = []
+    for result in results:
+        total_mark = 0
+        if result.ia1_mark: total_mark += result.ia1_mark
+        if result.ia2_mark: total_mark += result.ia2_mark
+        if result.midsem_mark: total_mark += result.midsem_mark
+        if result.end_sem_mark: total_mark += result.end_sem_mark
+        
+        subject_marks.append({
+            'subject': result.subject_id.name,
+            'total_mark': total_mark
+        })
+    
+    # Get notifications count
+    notification_count = Student_Notification.objects.filter(student_id=student, status=0).count()
+    
+    # Get study materials count
+    materials_count = StudyMaterial.objects.filter(subject__course=student.course_id).count()
+    
+    # Get notes count
     notes_count = Note.objects.filter(user=request.user).count()
+    
+    # Get leave applications status
+    leave_pending = Student_leave.objects.filter(student_id=student, status=0).count()
+    leave_approved = Student_leave.objects.filter(student_id=student, status=1).count()
+    leave_rejected = Student_leave.objects.filter(student_id=student, status=2).count()
+    
     context = {
-        'mark': mark,
+        'attendance_percent': round(attendance_percent, 1),
+        'subject_marks': subject_marks,
+        'notification_count': notification_count,
+        'materials_count': materials_count,
         'notes_count': notes_count,
+        'leave_pending': leave_pending,
+        'leave_approved': leave_approved,
+        'leave_rejected': leave_rejected,
+        'student': student,
     }
     return render(request, 'Student/home.html', context)
 
