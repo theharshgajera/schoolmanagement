@@ -17,37 +17,48 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <form action="?action=filter_attendance" method="post">
+                    <form method="post" action="?action=filter_attendance">
                         {% csrf_token %}
                         <div class="row">
-                            <div class="col-12">
-                                <h5 class="form-title"><span>Filter Attendance</span></h5>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label>Subject</label>
+                                    <select class="form-control" name="subject_id">
+                                        <option value="">Select Subject</option>
+                                        {% for i in subjects %}
+                                        <option value="{{ i.id }}" {% if get_subject.id == i.id %} selected {% endif %}>{{ i.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-12 col-sm-4">
-                                <label>Subject</label>
-                                <select class="form-control" name="subject_id">
-                                    <option value="">Select Subject</option>
-                                    {% for i in subjects %}
-                                    <option value="{{i.id}}" {% if i.id == get_subject.id %}selected{% endif %}>{{i.name}}</option>
-                                    {% endfor %}
-                                </select>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label>Session Year</label>
+                                    <select class="form-control" name="session_year_id">
+                                        <option value="">Select Session Year</option>
+                                        {% for i in session_years %}
+                                        <option value="{{ i.id }}" {% if get_session_year.id == i.id %} selected {% endif %}>{{ i.session_start }} To {{ i.session_end }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-12 col-sm-4">
-                                <label>Session Year</label>
-                                <select class="form-control" name="session_year_id">
-                                    <option value="">Select Session Year</option>
-                                    {% for i in session_years %}
-                                    <option value="{{i.id}}" {% if i.id == get_session_year.id %}selected{% endif %}>{{i.session_start}} To {{i.session_end}}</option>
-                                    {% endfor %}
-                                </select>
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <input type="date" class="form-control" name="start_date" value="{{ start_date|default:'' }}" required>
+                                </div>
                             </div>
-                            <div class="col-12 col-sm-4 mt-4">
-                                <label>Attendance Date</label>
-                                <input type="date" class="form-control" name="attendance_date" value="{{attendance_date}}">
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <input type="date" class="form-control" name="end_date" value="{{ end_date|default:'' }}" required>
+                                </div>
                             </div>
-                            <div class="col-12 mt-4">
-                                <button type="submit" class="btn btn-primary">Filter</button>
-                                <a href="{% url 'view_attendance' %}" class="btn btn-secondary">Reset</a>
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label>&nbsp;</label><br>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -57,15 +68,24 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <div class="card card-table">
+            <div class="card">
                 <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <h5 class="card-title">Attendance Results</h5>
+                        </div>
+                        <div class="col text-right">
+                            {% if attendance_reports %}
+                            <a href="?action=download_csv" class="btn btn-success">Download CSV</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
                     <div class="table-responsive">
                         <table id="table_id" class="table table-hover table-center mb-0">
                             <thead>
                                 <tr>
-                                    <th>Student ID</th>
-                                    <th>Student Name</th>
-                                    <th>Email</th>
+                                    <th>Student</th>
                                     <th>Subject</th>
                                     <th>Session Year</th>
                                     <th>Date</th>
@@ -73,19 +93,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for report in attendance_reports %}
+                                {% for i in attendance_reports %}
                                 <tr>
-                                    <td>{{report.student_id.admin.id}}</td>
-                                    <td>{{report.student_id.admin.first_name}} {{report.student_id.admin.last_name}}</td>
-                                    <td>{{report.student_id.admin.email}}</td>
-                                    <td>{{report.attendance_id.subject_id.name}}</td>
-                                    <td>{{report.attendance_id.session_year_id.session_start}} - {{report.attendance_id.session_year_id.session_end}}</td>
-                                    <td>{{report.attendance_id.attendance_data}}</td>
-                                    <td>{% if report.status == 1 %}Present{% else %}Absent{% endif %}</td>
+                                    <td>{{ i.student_id.admin.first_name }}</td>
+                                    <td>{{ i.attendance_id.subject_id.name }}</td>
+                                    <td>{{ i.attendance_id.session_year_id.session_start }} To {{ i.attendance_id.session_year_id.session_end }}</td>
+                                    <td>{{ i.attendance_id.attendance_data|date:"Y-m-d" }}</td>
+                                    <td>
+                                        {% if i.status == True %}
+                                        <span class="badge badge-success">Present</span>
+                                        {% else %}
+                                        <span class="badge badge-danger">Absent</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="7">No attendance records found.</td>
+                                    <td colspan="5">No attendance records found.</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

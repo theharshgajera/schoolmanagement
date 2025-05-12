@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 import csv
 from io import TextIOWrapper
+from datetime import datetime
 
 @login_required(login_url='/')
 def HOME(request):
@@ -767,13 +768,15 @@ def VIEW_ATTENDANCE(request):
     action = request.GET.get('action')
     get_subject = None
     get_session_year = None
-    attendance_date = None
+    start_date = None
+    end_date = None
     attendance_reports = Attendance_Report.objects.all().order_by('-attendance_id__attendance_data')
 
     if action == 'filter_attendance' and request.method == "POST":
         subject_id = request.POST.get('subject_id')
         session_year_id = request.POST.get('session_year_id')
-        attendance_date = request.POST.get('attendance_date')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
 
         try:
             if subject_id and subject_id.isdigit():
@@ -782,8 +785,10 @@ def VIEW_ATTENDANCE(request):
             if session_year_id and session_year_id.isdigit():
                 get_session_year = Session_Year.objects.get(id=int(session_year_id))
                 attendance_reports = attendance_reports.filter(attendance_id__session_year_id=get_session_year)
-            if attendance_date:
-                attendance_reports = attendance_reports.filter(attendance_id__attendance_data=attendance_date)
+            if start_date and end_date:
+                attendance_reports = attendance_reports.filter(
+                    attendance_id__attendance_data__range=[start_date, end_date]
+                )
         except Subject.DoesNotExist:
             messages.error(request, "Selected subject does not exist.")
             return redirect('view_attendance')
@@ -791,13 +796,32 @@ def VIEW_ATTENDANCE(request):
             messages.error(request, "Selected session year does not exist.")
             return redirect('view_attendance')
 
+    if action == 'download_csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="attendance_report.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(['Student', 'Subject', 'Session Year', 'Date', 'Status'])
+        
+        for report in attendance_reports:
+            writer.writerow([
+                report.student_id.admin.first_name,
+                report.attendance_id.subject_id.name,
+                f"{report.attendance_id.session_year_id.session_start} - {report.attendance_id.session_year_id.session_end}",
+                report.attendance_id.attendance_data.strftime('%Y-%m-%d'),
+                'Present' if report.status else 'Absent'
+            ])
+        
+        return response
+
     context = {
         'subjects': subjects,
         'session_years': session_years,
         'action': action,
         'get_subject': get_subject,
         'get_session_year': get_session_year,
-        'attendance_date': attendance_date,
+        'start_date': start_date,
+        'end_date': end_date,
         'attendance_reports': attendance_reports,
     }
     return render(request, 'Hod/view_attendance.html', context)
