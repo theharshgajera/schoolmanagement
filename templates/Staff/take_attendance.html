@@ -91,7 +91,12 @@
                         <div class="col-12 mt-2">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="student_{{ i.id }}" value="{{ i.id }}" name="student_id">
-                                <label class="form-check-label" for="student_{{ i.id }}">{{ i.admin.first_name }} {{ i.admin.last_name }}</label>
+                                <label class="form-check-label" for="student_{{ i.id }}">
+                                    {{ i.admin.first_name }} {{ i.admin.last_name }}
+                                    {% if i.enrollment_no %}
+                                    <span class="text-muted">({{ i.enrollment_no }})</span>
+                                    {% endif %}
+                                </label>
                             </div>
                         </div>
                         {% endfor %}
