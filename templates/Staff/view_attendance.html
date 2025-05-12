@@ -47,8 +47,14 @@
                         </div>
                         <div class="col-12 col-sm-4">
                             <div class="form-group">
-                                <label for="attendance_date">Attendance Date (Optional)</label>
-                                <input type="date" class="form-control" id="attendance_date" name="attendance_date">
+                                <label for="start_date">Start Date</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="form-group">
+                                <label for="end_date">End Date</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date|default:'' }}">
                             </div>
                         </div>
                         <div class="col-12 mt-4">
@@ -65,7 +71,7 @@
             <div class="card card-body">
                 <h5 class="form-title"><span>Attendance for {{ get_subject.name }} ({{ get_session_year.session_start }} To {{ get_session_year.session_end }})</span></h5>
                 <div class="table-responsive">
-                    <a href="?download=excel&subject_id={{ get_subject.id }}&session_year_id={{ get_session_year.id }}{% if attendance_date %}&attendance_date={{ attendance_date }}{% endif %}" class="btn btn-success mb-3">Download Excel</a>
+                    <a href="?download=excel&subject_id={{ get_subject.id }}&session_year_id={{ get_session_year.id }}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}" class="btn btn-success mb-3">Download Excel</a>
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr>

@@ -196,34 +196,44 @@ def STAFF_VIEW_ATTENDANCE(request):
     action = request.GET.get('action')
     get_subject = None
     get_session_year = None
-    attendance_date = request.GET.get('attendance_date')
+    start_date = None
+    end_date = None
     attendance_reports = None
 
     if action == 'view_attendance' or (request.method == "GET" and 'subject_id' in request.GET):
         if request.method == "POST":
             subject_id = request.POST.get('subject_id')
             session_year_id = request.POST.get('session_year_id')
-            attendance_date = request.POST.get('attendance_date')
+            start_date = request.POST.get('start_date')
+            end_date = request.POST.get('end_date')
         else:
             subject_id = request.GET.get('subject_id')
             session_year_id = request.GET.get('session_year_id')
-            attendance_date = request.GET.get('attendance_date')
+            start_date = request.GET.get('start_date')
+            end_date = request.GET.get('end_date')
 
         try:
             get_subject = Subject.objects.get(id=subject_id)
             get_session_year = Session_Year.objects.get(id=session_year_id)
+            
             if get_subject not in staff.subjects.all():
                 messages.error(request, "You are not authorized to view attendance for this subject.")
                 return redirect('staff_view_attendance')
-            attendance = Attendance.objects.filter(
+                
+            attendance_query = Attendance.objects.filter(
                 subject_id=get_subject,
                 session_year_id=get_session_year
             )
-            if attendance_date:
-                attendance = attendance.filter(attendance_data=attendance_date)
+            
+            if start_date:
+                attendance_query = attendance_query.filter(attendance_data__gte=start_date)
+            if end_date:
+                attendance_query = attendance_query.filter(attendance_data__lte=end_date)
+                
             attendance_reports = Attendance_Report.objects.filter(
-                attendance_id__in=attendance
-            ).order_by('student_id__admin__first_name')
+                attendance_id__in=attendance_query
+            ).order_by('attendance_id__attendance_data', 'student_id__admin__first_name')
+
         except Subject.DoesNotExist:
             messages.error(request, "Selected subject does not exist.")
             return redirect('staff_view_attendance')
@@ -234,47 +244,55 @@ def STAFF_VIEW_ATTENDANCE(request):
     if 'download' in request.GET and request.GET['download'] == 'excel':
         subject_id = request.GET.get('subject_id')
         session_year_id = request.GET.get('session_year_id')
-        attendance_date = request.GET.get('attendance_date')
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
 
         try:
             get_subject = Subject.objects.get(id=subject_id)
             get_session_year = Session_Year.objects.get(id=session_year_id)
+            
             if get_subject not in staff.subjects.all():
                 messages.error(request, "You are not authorized to download attendance for this subject.")
                 return redirect('staff_view_attendance')
-            attendance = Attendance.objects.filter(
+                
+            attendance_query = Attendance.objects.filter(
                 subject_id=get_subject,
                 session_year_id=get_session_year
             )
-            if attendance_date:
-                attendance = attendance.filter(attendance_data=attendance_date)
+            
+            if start_date:
+                attendance_query = attendance_query.filter(attendance_data__gte=start_date)
+            if end_date:
+                attendance_query = attendance_query.filter(attendance_data__lte=end_date)
+                
             attendance_reports = Attendance_Report.objects.filter(
-                attendance_id__in=attendance
-            ).order_by('student_id__admin__first_name')
-        except (Subject.DoesNotExist, Session_Year.DoesNotExist, ValueError) as e:
-            messages.error(request, "Invalid subject, session year, or attendance date selected.")
-            return redirect('staff_view_attendance')
+                attendance_id__in=attendance_query
+            ).order_by('attendance_id__attendance_data', 'student_id__admin__first_name')
 
-        if attendance_reports.exists():
-            wb = openpyxl.Workbook()
-            ws = wb.active
-            ws.title = "Attendance"
-            ws.append(["Student ID", "Student Name", "Subject", "Date", "Status"])
-            for report in attendance_reports:
-                student = report.student_id
-                ws.append([
-                    student.admin.id,
-                    f"{student.admin.first_name} {student.admin.last_name}",
-                    report.attendance_id.subject_id.name,
-                    report.attendance_id.attendance_data.strftime('%Y-%m-%d'),
-                    "Present" if report.status == 1 else "Absent"
-                ])
-            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Content-Disposition'] = f'attachment; filename=attendance_{get_subject.name}_{attendance_date or get_session_year.session_start}.xlsx'
-            wb.save(response)
-            return response
-        else:
-            messages.error(request, "No attendance data available to export.")
+            if attendance_reports.exists():
+                wb = openpyxl.Workbook()
+                ws = wb.active
+                ws.title = "Attendance"
+                ws.append(["Student ID", "Student Name", "Subject", "Date", "Status"])
+                for report in attendance_reports:
+                    student = report.student_id
+                    ws.append([
+                        student.admin.id,
+                        f"{student.admin.first_name} {student.admin.last_name}",
+                        report.attendance_id.subject_id.name,
+                        report.attendance_id.attendance_data.strftime('%Y-%m-%d'),
+                        "Present" if report.status == 1 else "Absent"
+                    ])
+                response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                response['Content-Disposition'] = f'attachment; filename=attendance_{get_subject.name}_{get_session_year.session_start}_to_{get_session_year.session_end}.xlsx'
+                wb.save(response)
+                return response
+            else:
+                messages.error(request, "No attendance data available to export.")
+                return redirect('staff_view_attendance')
+
+        except (Subject.DoesNotExist, Session_Year.DoesNotExist):
+            messages.error(request, "Invalid subject or session year.")
             return redirect('staff_view_attendance')
 
     context = {
@@ -283,7 +301,8 @@ def STAFF_VIEW_ATTENDANCE(request):
         'action': action,
         'get_subject': get_subject,
         'get_session_year': get_session_year,
-        'attendance_date': attendance_date,
+        'start_date': start_date,
+        'end_date': end_date,
         'attendance_reports': attendance_reports,
     }
     return render(request, 'Staff/view_attendance.html', context)
