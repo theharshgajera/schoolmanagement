@@ -1,0 +1,4 @@
+full_name,username,email,password,address,gender,enrollment_no,semester
+John Smith,john.smith,john.smith@example.com,pass123,123 Student Street,Male,EN2025001,1
+Sarah Johnson,sarah.j,sarah.j@example.com,pass123,456 College Road,Female,EN2025002,1
+Michael Brown,michael.b,michael.b@example.com,pass123,789 University Ave,Male,EN2025003,1

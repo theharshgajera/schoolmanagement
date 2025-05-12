@@ -23,6 +23,11 @@
                   <div class="col-sm-12">
                      <div class="card card-table">
                         <div class="card-body">
+                           <h5 class="card-title">Staff List</h5>
+                           <div class="text-right">
+                               <a href="{% url 'add_staff' %}" class="btn btn-primary">Add Staff</a>
+                               <a href="{% url 'bulk_add_staff' %}" class="btn btn-success">Bulk Add Staff</a>
+                           </div>
                            <div class="table-responsive">
                               <table id="table_id" class="table table-hover table-center mb-0 ">
                                  <thead>

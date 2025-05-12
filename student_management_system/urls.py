@@ -62,6 +62,10 @@ urlpatterns = [
     path('Hod/View/Attendance', Hod_Views.VIEW_ATTENDANCE, name='view_attendance'),
     path('get_subjects_by_course/', Hod_Views.get_subjects_by_course, name='get_subjects_by_course'),
 
+    # Bulk Add URLs
+    path('Hod/Student/Bulk_Add', Hod_Views.BULK_ADD_STUDENT, name='bulk_add_student'),
+    path('Hod/Staff/Bulk_Add', Hod_Views.BULK_ADD_STAFF, name='bulk_add_staff'),
+
     # Staff URLs
     path('Staff/Home', Staff_Views.HOME, name='staff_home'),
     path('Staff/Notifications', Staff_Views.NOTIFICATIONS, name='notifications'),

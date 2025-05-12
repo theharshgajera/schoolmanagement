@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from app.models import Course, Session_Year, CustomUser, Student, Staff, Subject, Staff_Notification, Staff_leave, Staff_Feedback, Student_Notification, Student_Feedback, Student_leave, Attendance, Attendance_Report, Parent
 from django.contrib import messages
 from django.http import JsonResponse
+import csv
+from io import TextIOWrapper
 
 @login_required(login_url='/')
 def HOME(request):
@@ -807,3 +809,116 @@ def get_subjects_by_course(request):
         subjects = Subject.objects.filter(course_id=course_id).values('id', 'name')
         return JsonResponse({'subjects': list(subjects)})
     return JsonResponse({'subjects': []})
+
+@login_required(login_url='/')
+def BULK_ADD_STUDENT(request):
+    course = Course.objects.all()
+    session_year = Session_Year.objects.all()
+    
+    if request.method == 'POST':
+        csv_file = request.FILES.get('csv_file')
+        if not csv_file:
+            messages.error(request, 'Please upload a CSV file')
+            return redirect('bulk_add_student')
+            
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, 'Please upload a valid CSV file')
+            return redirect('bulk_add_student')
+            
+        course_id = request.POST.get('course_id')
+        session_year_id = request.POST.get('session_year_id')
+        
+        try:
+            file_data = TextIOWrapper(csv_file.file, encoding='utf-8')
+            csv_reader = csv.DictReader(file_data)
+            
+            course = Course.objects.get(id=course_id)
+            session_year = Session_Year.objects.get(id=session_year_id)
+            
+            for row in csv_reader:
+                if CustomUser.objects.filter(email=row['email']).exists():
+                    continue
+                if CustomUser.objects.filter(username=row['username']).exists():
+                    continue
+                if Student.objects.filter(enrollment_no=row['enrollment_no']).exists():
+                    continue
+                    
+                user = CustomUser(
+                    first_name=row['full_name'],
+                    username=row['username'],
+                    email=row['email'],
+                    user_type=3
+                )
+                user.set_password(row['password'])
+                user.save()
+                
+                student = Student(
+                    admin=user,
+                    address=row['address'],
+                    session_year_id=session_year,
+                    course_id=course,
+                    gender=row['gender'],
+                    enrollment_no=row['enrollment_no'],
+                    semester=row.get('semester')
+                )
+                student.save()
+                
+            messages.success(request, "Students added successfully!")
+            return redirect('bulk_add_student')
+            
+        except Exception as e:
+            messages.error(request, f"Error: {str(e)}")
+            return redirect('bulk_add_student')
+    
+    context = {
+        'course': course,
+        'session_year': session_year,
+    }
+    return render(request, 'Hod/bulk_add_student.html', context)
+
+@login_required(login_url='/')
+def BULK_ADD_STAFF(request):
+    if request.method == 'POST':
+        csv_file = request.FILES.get('csv_file')
+        if not csv_file:
+            messages.error(request, 'Please upload a CSV file')
+            return redirect('bulk_add_staff')
+            
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, 'Please upload a valid CSV file')
+            return redirect('bulk_add_staff')
+            
+        try:
+            file_data = TextIOWrapper(csv_file.file, encoding='utf-8')
+            csv_reader = csv.DictReader(file_data)
+            
+            for row in csv_reader:
+                if CustomUser.objects.filter(email=row['email']).exists():
+                    continue
+                if CustomUser.objects.filter(username=row['username']).exists():
+                    continue
+                    
+                user = CustomUser(
+                    first_name=row['full_name'],
+                    username=row['username'],
+                    email=row['email'],
+                    user_type=2
+                )
+                user.set_password(row['password'])
+                user.save()
+                
+                staff = Staff(
+                    admin=user,
+                    address=row['address'],
+                    gender=row['gender']
+                )
+                staff.save()
+                
+            messages.success(request, "Staff members added successfully!")
+            return redirect('bulk_add_staff')
+            
+        except Exception as e:
+            messages.error(request, f"Error: {str(e)}")
+            return redirect('bulk_add_staff')
+    
+    return render(request, 'Hod/bulk_add_staff.html')
